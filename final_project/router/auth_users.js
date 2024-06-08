@@ -25,7 +25,6 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   let review = req.body.review;
-  console.log(review);
   let isbn = req.params.isbn;
   books[isbn]["reviews"] = review;
   let mess = "Review updated on ISBN "+isbn+": <<"+review+">>";
