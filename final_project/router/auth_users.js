@@ -25,11 +25,21 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   let review = req.body.review;
+  console.log(review);
   let isbn = req.params.isbn;
   books[isbn]["reviews"] = review;
   let mess = "Review updated on ISBN "+isbn+": <<"+review+">>";
   return res.status(300).json({message: mess});
 });
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  let isbn = req.params.isbn;
+  let review = books[isbn]["reviews"];
+  let mess = "Review deleted on ISBN "+isbn+": <<"+review+">>";
+  return res.status(300).json({message: mess});
+  });
+
+
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
