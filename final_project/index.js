@@ -4,7 +4,7 @@ const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
-let users = [{"username": "axel123", "password": "pass123"}]
+let users = []
 
 const app = express();
 
@@ -88,7 +88,7 @@ app.use("/customer/auth/*", function auth(req,res,next){
     }
 });
  
-const PORT =5000;
+const PORT =5001;
 
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
