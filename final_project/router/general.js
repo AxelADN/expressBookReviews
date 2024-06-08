@@ -5,51 +5,81 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  return res.send(JSON.stringify(books,null,4));
+public_users.get('/', function (req, res) {
+    let getBooksPromise = new Promise((resolve, reject) => {
+        if (books) {
+            resolve(books);
+        }
+    }).then((theBooks) => {
+        console.log("Resolved!")
+        return res.send(JSON.stringify(theBooks, null, 4));
+    });
 });
 
+
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  let isbn = req.params.isbn;
-  return res.send(JSON.stringify(books[isbn],null,4));
- });
-  
-// Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-    let author = req.params.author;
-    let books_list = Object.values(books);
-    books_list.forEach( book => {
-        if(author == book["author"]){
-            return res.send(JSON.stringify(book,null,4));
+public_users.get('/isbn/:isbn', function (req, res) {
+    let isbn = req.params.isbn;
+    let getBooksPromiseByISBN = new Promise((resolve, reject) => {
+        if (isbn && books) {
+            resolve(books[isbn]);
         }
+    }).then(theBook => {
+        console.log("Resolved!")
+        return res.send(JSON.stringify(theBook, null, 4));
     });
-    return res.status(300).json({message: "Author not in DataBase"});
-    
+});
+
+
+
+// Get book details based on author
+public_users.get('/author/:author', function (req, res) {
+    let getBooksPromiseByAuthor = new Promise((resolve, reject) => {
+        let author = req.params.author;
+        if (author && books) {
+            Object.values(books).forEach(book => {
+                if (author == book["author"]) {
+                    resolve(book);
+                }
+            });
+        }
+        reject("Author not in DataBase");
+    }).then(
+        theBook => {
+            return res.send(JSON.stringify(theBook, null, 4));
+        }, err => {
+            return res.status(300).json({ message: err });
+        });
+
+
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-    let title = req.params.title;
-    let books_list = Object.values(books);
-    books_list.forEach( book => {
-        if(title == book["title"]){
-            return res.send(JSON.stringify(book,null,4));
+public_users.get('/title/:title', function (req, res) {
+    let getBooksPromiseByTitle = new Promise((resolve, reject) => {
+        let title = req.params.title;
+        if (title && books) {
+            Object.values(books).forEach(book => {
+                if (title == book["title"]) {
+                    resolve(book);
+                }
+            });
         }
-    });
-    return res.status(300).json({message: "Title not in DataBase"});
+        reject("Title not in DataBase");
+    }).then(
+        theBook => {
+            return res.send(JSON.stringify(theBook, null, 4));
+        }, err => {
+            return res.status(300).json({ message: err });
+        });
 });
 
 //  Get book review
-public_users.get('/review/:isbn',function (req, res) {
+public_users.get('/review/:isbn', function (req, res) {
     let isbn = req.params.isbn;
-    return res.send(JSON.stringify(books[isbn]["reviews"],null,4));
+    return res.send(JSON.stringify(books[isbn]["reviews"], null, 4));
 });
 
 module.exports.general = public_users;
